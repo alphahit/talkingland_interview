@@ -151,7 +151,6 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
     : emailItems;
 
   const handleStarred = (eitem: { id: number }) => {
-    console.log('Item--> ', eitem);
     const updatedEmailItem = emailItems.map(item => {
       return eitem.id === item.id
         ? {
@@ -162,8 +161,29 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
     });
     setEmailItems(updatedEmailItem);
   };
+
+  const handleRead = (eitem: { id: number }) => {
+    const updatedEmailItem = emailItems.map(item => {
+      return eitem.id === item.id
+        ? {
+            ...item,
+            read: !item.read ? true : item.read,
+          }
+        : item;
+    });
+    setEmailItems(updatedEmailItem);
+  };
+
   const renderMailItem = ({ item }: { item: any }) => (
-    <View style={styles.productContainer}>
+    <Pressable
+      onPress={() => {
+        handleRead(item);
+      }}
+      style={[
+        styles.productContainer,
+        { backgroundColor: item.read ? 'black' : 'grey' },
+      ]}
+    >
       <View
         style={{
           height: 40,
@@ -177,7 +197,7 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
       >
         <Text style={{ fontWeight: '700' }}>{item.sender.slice(0, 1)}</Text>
       </View>
-      <View style={{ width: '80%' }}>
+      <View style={{ width: '75%' }}>
         <Text style={styles.text}>{item.sender}</Text>
         <Text style={styles.textSubject}>{item.subject}</Text>
         <Text style={styles.textBody}>{item.body}</Text>
@@ -191,7 +211,7 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
           <WhiteStar width={40} height={40} />
         </TouchableOpacity>
       )}
-    </View>
+    </Pressable>
   );
   const handleDelete = (id: number) => {
     setEmailItems(current => current.filter(email => email.id !== id));
@@ -206,8 +226,6 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
   );
 
   const fetchNewData = () => {
-    
-
     const updatedEmailItem = emailItems.map(item => {
       const start = Date.now();
 
@@ -224,7 +242,10 @@ const EmailList: React.FC<EmailListProps> = ({ searchQuery = '' }) => {
   //     console.log('emailItems--->',emailItems)
   //   },[emailItems])
   return (
-    <View accessible={true} style={{ alignItems: 'center', marginTop: 10, flex:1 }}>
+    <View
+      accessible={true}
+      style={{ alignItems: 'center', marginTop: 10, flex: 1 }}
+    >
       <SwipeableFlatList
         accessible={true}
         data={filteredEmails}
@@ -262,7 +283,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
     marginVertical: 10,
-    backgroundColor: 'black',
+    borderRadius: 10,
+    paddingLeft: 10,
   },
   contentContainer: {
     // flex: 1,
